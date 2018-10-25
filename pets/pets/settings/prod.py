@@ -1,14 +1,61 @@
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+
 import os
 
 import raven
 from decouple import Csv, config
+import django_heroku
+import dj_database_url
 from dj_database_url import parse as db_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/dev/howto/deployment/checklist/
+
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+
+# Static files (CSS, JavaScript, Images)
+# https://docs.djangoproject.com/en/1.9/howto/static-files/
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATIC_URL = '/static/'
+
+# Extra places for collectstatic to find static files.
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, 'static'),
+)
+
+MODE = config("MODE", default="dev")
+SECRET_KEY = config('SECRET_KEY')
+DEBUG = config('DEBUG', default=False, cast=bool)
+# development
+if config('MODE') == "dev":
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql_psycopg2',
+            'NAME': config('DB_NAME'),
+            'USER': config('DB_USER'),
+            'PASSWORD': config('DB_PASSWORD'),
+            'HOST': config('DB_HOST'),
+            'PORT': '',
+        }
+
+    }
+# production
+else:
+    DATABASES = {
+        'default': dj_database_url.config(
+            default=config('DATABASE_URL')
+        )
+    }
+
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
+
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', cast=Csv())
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = config('SECRET_KEY')
@@ -18,7 +65,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 INTERNAL_IPS = config('INTERNAL_IPS', default='', cast=Csv())
 
-ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='', cast=Csv())
+ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='*', cast=Csv())
 
 # Application definition
 
@@ -125,18 +172,31 @@ WSGI_APPLICATION = 'pets.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
-conn_max_age = config('DB_CONN_MAX_AGE', default=0, cast=int)
-default_db_url = config('DATABASE_URL')
+# conn_max_age = config('DB_CONN_MAX_AGE', default=0, cast=int)
+# default_db_url = config('DATABASE_URL')
+# DATABASES = {
+#     'default': db_url(default_db_url, conn_max_age=conn_max_age)
+# }
+
+# Database
+# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+
 DATABASES = {
-    'default': db_url(default_db_url, conn_max_age=conn_max_age)
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'pets',
+        'USER': 'student',
+        'PASSWORD': '1209',
+    }
 }
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/
 
 LANGUAGE_CODE = 'pt-BR'
 
-TIME_ZONE = 'America/Sao_Paulo'
+TIME_ZONE = 'Africa/Nairobi'
 
 USE_I18N = True
 
@@ -212,7 +272,8 @@ SOCIAL_AUTH_FACEBOOK_SECRET = config('SOCIAL_AUTH_FACEBOOK_SECRET', default='')
 SOCIAL_AUTH_TWITTER_KEY = config('SOCIAL_AUTH_TWITTER_KEY', default='')
 SOCIAL_AUTH_TWITTER_SECRET = config('SOCIAL_AUTH_TWITTER_SECRET', default='')
 
-FACEBOOK_SHARE_GRAPH_API_VERSION = config('FACEBOOK_SHARE_GRAPH_API_VERSION', default='2.7')
+FACEBOOK_SHARE_GRAPH_API_VERSION = config(
+    'FACEBOOK_SHARE_GRAPH_API_VERSION', default='2.7')
 FACEBOOK_SHARE_URL = 'https://www.facebook.com/sharer.php?u=https://cademeubicho.com/pets/{}/'
 TWITTER_SHARE_URL = 'https://twitter.com/share?url=https://cademeubicho.com/pets/{}/'
 
