@@ -1,0 +1,23 @@
+language: python
+dist: trusty
+addons:
+  chrome: stable
+  postgresql: "9.5"
+services:
+  - postgresql
+python:
+  - "3.6"
+install:
+  - pip install pip --upgrade
+  - pip install pipenv
+  - pip install coveralls
+  - pipenv install --dev --deploy
+  - sudo curl --output /tmp/chromedriver.zip https://chromedriver.storage.googleapis.com/2.41/chromedriver_linux64.zip
+  - sudo unzip /tmp/chromedriver.zip -d /usr/local/bin/
+script:
+  - cd pets
+  - coverage run --rcfile=../.coveragerc manage.py test
+before_script:
+  - psql -U postgres -c 'create database pets;'
+after_success:
+  - coveralls

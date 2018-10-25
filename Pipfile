@@ -1,0 +1,34 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+dj-database-url = "*"
+django-autoslug = "*"
+django_compressor = "*"
+django-cors-middleware = "*"
+django-crispy-forms = "*"
+django-extensions = "*"
+django-password-reset = "*"
+Django = "<2"
+djangorestframework = "*"
+easy-thumbnails = "*"
+facebook-sdk = "*"
+Pillow = "*"
+psycopg2-binary = "*"
+python-decouple = "*"
+social-auth-app-django = "*"
+sendgrid = "*"
+raven = "*"
+gunicorn = "*"
+
+[dev-packages]
+selenium = "*"
+django-test-without-migrations = "*"
+model_mommy = "*"
+django-debug-toolbar = "*"
+pre-commit = "*"
+
+[requires]
+python_full_version = "3.6.6"
